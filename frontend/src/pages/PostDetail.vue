@@ -1,0 +1,3 @@
+<template>
+    postdetail
+</template>

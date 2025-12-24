@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+
+
+</head>
+
+<body class="flex flex-col items-center justify-center w-full h-screen bg-slate-950 text-slate-50">
+    <div class="flex flex-col w-full gap-2 px-8 py-4 border-2 login-container login-card max-w-100 bg-slate-900 rounded-2xl border-slate-950">
+
+        <div class="">
+
+            <header class="pb-4 card-header">
+                <span class="w-12 px-2 text-xs bg-teal-300 badgerounded-xs">Welcome Back</span>
+                <h1 class="text-3xl font-extrabold">Login</h1>
+                <p class="text-xs "> Enter your credentials to access your blog.</p>
+            </header>
+
+            <hr class="separator">
+
+            <form class="login-form">
+
+                <div class="input-group">
+                    <label for="username">Username</label>
+                    <input type="text" id="username" placeholder="nabeel_dev">
+                </div>
+
+                <div class="input-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" placeholder="••••••">
+                </div>
+
+                <button type="submit" class="btn-login">
+                    LOGIN
+                </button>
+
+            </form>
+
+            <footer class="card-footer">
+                <span>Don't have an account?</span>
+                <a href="#">Sign up</a>
+            </footer>
+
+        </div>
+
+    </div>
+</body>
+
+</html>
