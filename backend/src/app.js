@@ -17,26 +17,34 @@ dotenv.config();
 connectDb();
 const app = express();
 
+app.set('trust proxy', 1);
+
+app.use(helmet({
+  contentSecurityPolicy: false,
+  crossOriginResourcePolicy: { policy: "cross-origin" }
+}));
+
 if (process.env.NODE_ENV === "development") {
   app.use(morgan("dev")); 
 }
-app.use(helmet())
 app.use(
   cors({
-    origin: "*",
+    origin: true,
+    credentials: true,
     methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
-    allowedHeaders: ["Content-Type", "Authorization"],
+    allowedHeaders: ["Content-Type", "Authorization", "Cookie"],
   })
 );
 app.use(express.json());
 app.use(cookieParser());
+app.use(globalLimit)
 app.use(express.urlencoded({ extended: true }));
 app.use(
   morgan("combined", {
     stream: { write: (message) => logger.info(message.trim()) },
   })
 );
-app.use(globalLimit)
+
 
 app.use("/api/admin", adminRouter);
 app.use("/api/users", userRouter);
