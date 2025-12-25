@@ -14,8 +14,8 @@ DELETE /api/posts/:postId/comments/:commentId
 GET    /api/posts/:postId/likes
 POST   /api/posts/:postId/likes
 
-QUERY  /api/posts?search=value+value
-       /api/users/?search=value+value
+QUERY  /api/posts?search=value+value ---username, title, content
+       /api/users/?search=value+value --- username, lastname, firstname
 
 LIMIT 
       /api/posts?search=value+value&limit=value&page=value

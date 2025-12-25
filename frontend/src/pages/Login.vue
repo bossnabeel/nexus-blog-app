@@ -1,9 +1,6 @@
 <script setup>
 import { ref } from 'vue';
-import { useAuthStore } from '../store/auth';
-import router from '../router'
 
-const authStore = useAuthStore();
 
 const showPassword = ref(false);
 const form = ref({
@@ -11,14 +8,6 @@ const form = ref({
   password: '',
 });
 
-
-async function handleLogin() {
-  const response = await authStore.login(form.value);
-  console.log(response.data)
-  if (response?.status === "success") {
-    router.push('/'); 
-  }
-}
 </script>
 
 <template>
@@ -34,7 +23,7 @@ async function handleLogin() {
       <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-1">Enter your credentials to access your dashboard.</p>
     </div>
 
-    <form @submit.prevent="handleLogin" class="space-y-2">
+    <form class="space-y-2">
       
       <div class="space-y-1">
         <input v-model="form.username" type="text" placeholder="Username"

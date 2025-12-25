@@ -10,11 +10,6 @@ const form = ref({
 });
 
 async function handleRegister() {
-  try {
-    }
-   catch (error) {
-    console.log(error.message)
-  }
 }
 </script>
 
@@ -112,7 +107,6 @@ async function handleRegister() {
 
         <button
           type="submit"
-          :disabled="authStore.isLoading"
           class="w-full py-3 mt-2 text-sm font-bold text-white rounded-xl bg-teal-500 hover:bg-teal-600 shadow-md active:scale-[0.97] transition-all cursor-pointer"
         >
           CREATE ACCOUNT
