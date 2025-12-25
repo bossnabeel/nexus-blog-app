@@ -60,8 +60,8 @@ app.use((_req, _res, next) => {
 
 app.use(errorHandler);
 
-// app.listen(process.env.PORT, "0.0.0.0", () => {
-//   console.log(`http://0.0.0.0:${process.env.PORT}/api`);
-// });
+app.listen(process.env.PORT, "0.0.0.0", () => {
+  console.log(`http://0.0.0.0:${process.env.PORT}/api`);
+});
 
 export default app;
