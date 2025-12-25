@@ -3,13 +3,13 @@
   "version": "1.0.0",
   "description": "",
   "main": "app.js",
- "scripts": {
-  "dev": "nodemon src/app.js",
-  "seed": "node prisma/seed.js",
-  "postinstall": "prisma generate", 
-  "build": "prisma generate",
-  "start": "node src/app.js"
-},
+  "scripts": {
+    "dev": "nodemon src/app.js",
+    "seed": "node prisma/seed.js",
+    "postinstall": "prisma generate --schema=./src/prisma/schema.prisma",
+    "build": "prisma generate",
+    "start": "node src/app.js"
+  },
   "keywords": [],
   "author": "",
   "license": "ISC",
