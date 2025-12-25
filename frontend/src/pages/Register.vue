@@ -9,8 +9,7 @@ const form = ref({
   password: "",
 });
 
-async function handleRegister() {
-}
+async function handleRegister() {}
 </script>
 
 <template>

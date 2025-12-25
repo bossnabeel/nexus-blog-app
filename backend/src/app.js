@@ -1,7 +1,6 @@
 import express from "express";
 import cookieParser from "cookie-parser";
 import cors from "cors";
-import helmet from "helmet";
 import dotenv from "dotenv";
 import { connectDb } from "./config/db.js";
 import adminRouter from "./routes/admindRouter.js";
@@ -9,42 +8,27 @@ import userRouter from "./routes/userRouter.js";
 import postRouter from "./routes/postRouter.js";
 import { errorHandler } from "./middleware/errorHandler.js";
 import NotFound from "./utils/errors/NotFound.js";
-import morgan from 'morgan';
-import logger from './utils/logger.js';
+import morgan from "morgan";
+import logger from "./utils/logger.js";
 import { globalLimit } from "./middleware/rateLimiter.js";
 
 dotenv.config();
 connectDb();
 const app = express();
 
-app.set('trust proxy', 1);
-
-app.use(helmet({
-  contentSecurityPolicy: false,
-  crossOriginResourcePolicy: { policy: "cross-origin" }
-}));
-
 if (process.env.NODE_ENV === "development") {
-  app.use(morgan("dev")); 
+  app.use(morgan("dev"));
 }
-app.use(
-  cors({
-    origin: true,
-    credentials: true,
-    methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
-    allowedHeaders: ["Content-Type", "Authorization", "Cookie"],
-  })
-);
+app.use(cors());
 app.use(express.json());
 app.use(cookieParser());
-app.use(globalLimit)
+app.use(globalLimit);
 app.use(express.urlencoded({ extended: true }));
 app.use(
   morgan("combined", {
     stream: { write: (message) => logger.info(message.trim()) },
   })
 );
-
 
 app.use("/api/admin", adminRouter);
 app.use("/api/users", userRouter);

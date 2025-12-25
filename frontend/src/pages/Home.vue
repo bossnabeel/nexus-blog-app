@@ -1,10 +1,20 @@
 <script setup>
 import { computed, onMounted, ref } from "vue";
+import { api } from "../services/api.js";
 
 const activeCommentId = ref(null);
 const newComment = ref("");
 const comments = ref([]);
 const posts = ref([]);
+
+onMounted(async function () {
+ try{
+   const response = await api.get("/posts");
+  posts.value.push(...response.data.data);
+ }catch(err){
+  console.log(err)
+ }
+});
 </script>
 
 <template>
@@ -31,10 +41,10 @@ const posts = ref([]);
     <main class="max-w-7xl mx-auto px-4 py-12">
       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
         <!-- post Card  -->
-        <div v-if="false" class="text-center py-20 text-slate-400">
+        <div v-if="posts.length === 0" class="m-auto text-center py-20 text-slate-400">
           Loading posts...
         </div>
-        <article
+        <article v-for="post in posts"
           class="group flex flex-col grow bg-white dark:bg-[#1e293b] border border-slate-200 dark:border-slate-700/50 rounded-3xl overflow-hidden hover:shadow-2xl transition-all duration-300"
         >
           <div
@@ -45,22 +55,20 @@ const posts = ref([]);
             <div
               class="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-4"
             >
-              <span class="text-teal-500">Bossnabeel</span>
+              <span class="text-teal-500">{{post.author.username}}</span>
               <span>•</span>
-              <span>{{
-                new Date('2025-12-24 22:07:27.094').toLocaleDateString("en-GB")
-              }}</span>
+              <span>{{new Date(post.created_at).toLocaleDateString()}}</span>
             </div>
 
             <h3
               class="text-xl font-extrabold text-slate-900 dark:text-white mb-3 group-hover:text-teal-500 transition-colors"
             >
-              demo text 
+              {{post.title}}
             </h3>
             <p
               class="text-sm text-slate-600 dark:text-slate-400 mb-6 line-clamp-3 leading-relaxed italic"
             >
-              Lorem ipsum dolor sit, amet consectetur adipisicing elit. Id, deserunt!
+              {{ post.content }}
             </p>
 
             <div
@@ -71,7 +79,7 @@ const posts = ref([]);
               >
                 <span class="text-xl">🤍</span>
                 <span class="text-xs font-bold dark:text-slate-300">
-                 100k
+                   {{ post.likesCount }}
                 </span>
               </button>
 
@@ -79,7 +87,9 @@ const posts = ref([]);
                 class="flex items-center gap-1.5 cursor-pointer hover:scale-110 transition-transform"
               >
                 <span class="text-xl">💬</span>
-                <span class="text-xs font-bold dark:text-slate-300">20k</span>
+                <span class="text-xs font-bold dark:text-slate-300">
+                  {{ post.commentsCount }}
+                </span>
               </button>
             </div>
             <!-- v-if="" -->

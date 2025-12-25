@@ -1,6 +1,6 @@
 import axios from "axios";
 export const api = axios.create({
-  baseURL: `https://nexus-blog-3uy2u0e3v-bossnabeels-projects.vercel.app/api`,
+  baseURL: `https://localehost:5000/api`,
 });
 api.interceptors.request.use((config) => {
   const token = localStorage.getItem("jwt");
@@ -9,3 +9,4 @@ api.interceptors.request.use((config) => {
   }
   return config;
 });
+
