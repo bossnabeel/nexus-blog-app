@@ -8,6 +8,10 @@ export const errorHandler = (err, req, res, _next) => {
     statusCode = 400;
     message = `Duplicate field value: ${err.meta.target}`;
   }
+  if(err.code ===  'P1001'){
+    statusCode = 400;
+    message = `DB server is not running`;
+  }
   if (err.name === "ZodError") {
     err.status = "fail";
     err.statusCode = 400;

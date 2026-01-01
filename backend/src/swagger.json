@@ -1,0 +1,900 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Nexus Blogging API",
+    "version": "1.0.0",
+    "description": "OpenAPI documentation for the Blogging website backend"
+  },
+  "servers": [
+    {
+      "url": "https://nexus-blog-app.vercel.app/api/v1",
+      "description": "Production Server (Live API)"
+    }
+  ],
+  "paths": {
+    "/users": {
+      "get": {
+        "summary": "Search users",
+        "tags": ["Users"],
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "schema": { "type": "integer", "default": 1 }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "schema": { "type": "integer", "default": 15 }
+          },
+          {
+            "name": "search",
+            "in": "query",
+            "schema": { "type": "string" },
+            "description": "Search by username, firstName, or lastName"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of users",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": { "type": "string", "example": "success" },
+                    "data": {
+                      "type": "array",
+                      "items": { "$ref": "#/components/schemas/User" }
+                    },
+                    "pagination": {
+                      "type": "object",
+                      "properties": {
+                        "totalUsers": { "type": "integer" },
+                        "totalPages": { "type": "integer" },
+                        "current": { "type": "integer" },
+                        "limit": { "type": "integer" }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/users/register": {
+      "post": {
+        "summary": "Register a new user",
+        "tags": ["Auth"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/UserCreate" }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "User created successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": { "type": "string", "example": "success" },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "user": { "$ref": "#/components/schemas/User" },
+                        "token": { "type": "string" }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/users/login": {
+      "post": {
+        "summary": "Login user",
+        "tags": ["Auth"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/UserLogin" }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Logged in successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": { "type": "string", "example": "success" },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "user": { "$ref": "#/components/schemas/User" },
+                        "token": { "type": "string" }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/users/logout": {
+      "get": {
+        "summary": "Logout user",
+        "tags": ["Auth"],
+        "responses": {
+          "200": {
+            "description": "Logged out successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": { "type": "string", "example": "success" },
+                    "message": {
+                      "type": "string",
+                      "example": "logout successfully"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/users/me": {
+      "get": {
+        "summary": "Get current user",
+        "tags": ["Users"],
+        "security": [{ "bearerAuth": [] }],
+        "responses": {
+          "200": {
+            "description": "Current user details",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": { "type": "string", "example": "success" },
+                    "data": { "$ref": "#/components/schemas/User" }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "summary": "Update current user",
+        "tags": ["Users"],
+        "security": [{ "bearerAuth": [] }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/UserUpdate" }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "User updated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": { "type": "string", "example": "success" },
+                    "data": { "$ref": "#/components/schemas/User" }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/users/me/stats": {
+      "get": {
+        "summary": "Get current user stats (last 30 days)",
+        "tags": ["Users"],
+        "security": [{ "bearerAuth": [] }],
+        "responses": {
+          "200": {
+            "description": "User statistics",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": { "type": "string", "example": "success" },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "likesReceivedLast30Days": { "type": "integer" },
+                        "commentsReceivedLast30Days": { "type": "integer" },
+                        "postsCreatedLast30Days": { "type": "integer" }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/posts": {
+      "get": {
+        "summary": "Get all posts",
+        "tags": ["Posts"],
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "schema": { "type": "integer", "default": 1 }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "schema": { "type": "integer", "default": 10 }
+          },
+          {
+            "name": "username",
+            "in": "query",
+            "schema": { "type": "string" },
+            "description": "Filter posts by username"
+          },
+          {
+            "name": "search",
+            "in": "query",
+            "schema": { "type": "string" },
+            "description": "Search in title and content"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of posts",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": { "type": "string", "example": "success" },
+                    "data": {
+                      "type": "array",
+                      "items": { "$ref": "#/components/schemas/Post" }
+                    },
+                    "pagination": {
+                      "type": "object",
+                      "properties": {
+                        "totalPosts": { "type": "integer" },
+                        "totalPages": { "type": "integer" },
+                        "currentPage": { "type": "integer" },
+                        "limit": { "type": "integer" }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Create a new post",
+        "tags": ["Posts"],
+        "security": [{ "bearerAuth": [] }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/PostCreate" }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Post created successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": { "type": "string", "example": "success" },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "post": { "$ref": "#/components/schemas/Post" }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/posts/{postId}": {
+      "parameters": [
+        {
+          "name": "postId",
+          "in": "path",
+          "required": true,
+          "schema": { "type": "string", "format": "uuid" }
+        }
+      ],
+      "get": {
+        "summary": "Get single post",
+        "tags": ["Posts"],
+        "responses": {
+          "200": {
+            "description": "Post details",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": { "type": "string", "example": "success" },
+                    "data": { "$ref": "#/components/schemas/PostDetail" }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "summary": "Update a post",
+        "tags": ["Posts"],
+        "security": [{ "bearerAuth": [] }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/PostCreate" }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Post updated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": { "type": "string", "example": "success" },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "post": { "$ref": "#/components/schemas/Post" }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "summary": "Delete a post",
+        "tags": ["Posts"],
+        "security": [{ "bearerAuth": [] }],
+        "responses": {
+          "204": {
+            "description": "Post deleted successfully"
+          }
+        }
+      }
+    },
+    "/posts/{postId}/comments": {
+      "get": {
+        "summary": "Get comments for a post",
+        "tags": ["Comments"],
+        "parameters": [
+          {
+            "name": "postId",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string", "format": "uuid" }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "schema": { "type": "integer", "default": 1 }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "schema": { "type": "integer", "default": 20 }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of comments",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": { "type": "string", "example": "success" },
+                    "data": {
+                      "type": "array",
+                      "items": { "$ref": "#/components/schemas/Comment" }
+                    },
+                    "pagination": {
+                      "type": "object",
+                      "properties": {
+                        "totalComments": { "type": "integer" },
+                        "totalPages": { "type": "integer" },
+                        "currentPage": { "type": "integer" },
+                        "limit": { "type": "integer" }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Create a comment",
+        "tags": ["Comments"],
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          {
+            "name": "postId",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string", "format": "uuid" }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/CommentCreate" }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Comment created successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": { "type": "string", "example": "success" },
+                    "data": { "$ref": "#/components/schemas/Comment" }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/posts/{postId}/comments/{commentId}": {
+      "delete": {
+        "summary": "Delete comment",
+        "tags": ["Comments"],
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          {
+            "name": "postId",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string", "format": "uuid" }
+          },
+          {
+            "name": "commentId",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string", "format": "uuid" }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Comment deleted successfully"
+          }
+        }
+      }
+    },
+    "/posts/{postId}/likes": {
+      "get": {
+        "summary": "Get likes for a post",
+        "tags": ["Likes"],
+        "parameters": [
+          {
+            "name": "postId",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string", "format": "uuid" }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "schema": { "type": "integer", "default": 1 }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "schema": { "type": "integer", "default": 20 }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of likes",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": { "type": "string", "example": "success" },
+                    "data": {
+                      "type": "array",
+                      "items": { "$ref": "#/components/schemas/Like" }
+                    },
+                    "pagination": {
+                      "type": "object",
+                      "properties": {
+                        "totalLikes": { "type": "integer" },
+                        "pageCount": { "type": "integer" },
+                        "limit": { "type": "integer" },
+                        "skip": { "type": "integer" }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Toggle like for a post (like/unlike)",
+        "tags": ["Likes"],
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          {
+            "name": "postId",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string", "format": "uuid" }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Post liked successfully"
+          },
+          "204": {
+            "description": "Post unliked successfully"
+          }
+        }
+      }
+    },
+    "/admin/stats": {
+      "get": {
+        "summary": "Get admin stats",
+        "tags": ["Admin"],
+        "security": [{ "bearerAuth": [] }],
+        "responses": {
+          "200": {
+            "description": "Admin statistics",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": { "type": "string", "example": "success" },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "users": { "type": "integer" },
+                        "posts": { "type": "integer" },
+                        "likes": { "type": "integer" },
+                        "comments": { "type": "integer" }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT",
+        "description": "Enter JWT token in the format: Bearer {token}"
+      }
+    },
+    "schemas": {
+      "User": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "firstName": {
+            "type": "string"
+          },
+          "lastName": {
+            "type": "string"
+          },
+          "username": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string",
+            "format": "email"
+          },
+          "role": {
+            "type": "string",
+            "enum": ["USER", "ADMIN"]
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "UserCreate": {
+        "type": "object",
+        "required": ["firstName", "lastName", "username", "email", "password"],
+        "properties": {
+          "firstName": {
+            "type": "string",
+            "minLength": 2,
+            "example": "John"
+          },
+          "lastName": {
+            "type": "string",
+            "minLength": 2,
+            "example": "Doe"
+          },
+          "username": {
+            "type": "string",
+            "minLength": 3,
+            "example": "johndoe"
+          },
+          "email": {
+            "type": "string",
+            "format": "email",
+            "example": "john@example.com"
+          },
+          "password": {
+            "type": "string",
+            "format": "password",
+            "minLength": 8,
+            "example": "password123"
+          }
+        }
+      },
+      "UserLogin": {
+        "type": "object",
+        "required": ["username", "password"],
+        "properties": {
+          "username": {
+            "type": "string",
+            "minLength": 3,
+            "example": "johndoe"
+          },
+          "password": {
+            "type": "string",
+            "format": "password",
+            "minLength": 8,
+            "example": "password123"
+          }
+        }
+      },
+      "UserUpdate": {
+        "type": "object",
+        "properties": {
+          "firstName": {
+            "type": "string"
+          },
+          "lastName": {
+            "type": "string"
+          },
+          "username": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string",
+            "format": "email"
+          }
+        }
+      },
+      "Post": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "user_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "title": {
+            "type": "string"
+          },
+          "content": {
+            "type": "string"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "author": {
+            "type": "object",
+            "properties": {
+              "id": { "type": "string" },
+              "username": { "type": "string" }
+            }
+          },
+          "isLiked": {
+            "type": "boolean"
+          },
+          "likesCount": {
+            "type": "integer"
+          },
+          "commentsCount": {
+            "type": "integer"
+          }
+        }
+      },
+      "PostDetail": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string"
+          },
+          "content": {
+            "type": "string"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "author": {
+            "type": "object",
+            "properties": {
+              "id": { "type": "string" },
+              "username": { "type": "string" },
+              "firstName": { "type": "string" },
+              "lastName": { "type": "string" }
+            }
+          },
+          "commentsCount": {
+            "type": "integer"
+          },
+          "isLiked": {
+            "type": "boolean"
+          },
+          "likesCount": {
+            "type": "integer"
+          }
+        }
+      },
+      "PostCreate": {
+        "type": "object",
+        "required": ["content"],
+        "properties": {
+          "title": {
+            "type": "string",
+            "maxLength": 200,
+            "example": "My First Blog Post"
+          },
+          "content": {
+            "type": "string",
+            "minLength": 12,
+            "example": "This is the content of my blog post..."
+          }
+        }
+      },
+      "Comment": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "post_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "user_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "text": {
+            "type": "string"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "user": {
+            "type": "object",
+            "properties": {
+              "id": { "type": "string" },
+              "username": { "type": "string" }
+            }
+          }
+        }
+      },
+      "CommentCreate": {
+        "type": "object",
+        "required": ["text"],
+        "properties": {
+          "text": {
+            "type": "string",
+            "minLength": 1,
+            "example": "Great post!"
+          }
+        }
+      },
+      "Like": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "post_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "user_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "user": {
+            "type": "object",
+            "properties": {
+              "username": { "type": "string" }
+            }
+          }
+        }
+      }
+    }
+  }
+}

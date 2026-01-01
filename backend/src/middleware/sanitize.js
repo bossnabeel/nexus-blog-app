@@ -2,11 +2,7 @@ import sanitize from "sanitize-html";
 
 const sanitizeInput = (req, _res, next) => {
   const clean = {
-    allowedTags: ["b", "i", "em", "strong", "a", "img"],
-    allowedAttributes: {
-      a: ["href"],
-      img: ["src", "alt"],
-    },
+    allowedTags: ["b", "i", "em", "strong", "a"],
   };
   if (req.body) {
     if (req.body.title) {

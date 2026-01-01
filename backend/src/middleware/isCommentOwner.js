@@ -2,7 +2,8 @@ import { prisma } from "../config/db.js";
 import { catchAsync } from "../utils/catchAsync.js";
 import { NotFound } from "../utils/errors/NotFound.js";
 import { ForbiddenError } from "../utils/errors/ForbiddenError.js";
-const isCommentOwner = catchAsync(async (req, res, next) => {
+
+const isCommentOwner = catchAsync(async (req, _res, next) => {
   const commentId = req.params.commentId;
   const postId = req.params.postId;
   const userId = req.user.id;

@@ -3,7 +3,7 @@ import cookieParser from "cookie-parser";
 import cors from "cors";
 import dotenv from "dotenv";
 import { connectDb } from "./config/db.js";
-import adminRouter from "./routes/admindRouter.js";
+import adminRouter from "./routes/adminRouter.js";
 import userRouter from "./routes/userRouter.js";
 import postRouter from "./routes/postRouter.js";
 import { errorHandler } from "./middleware/errorHandler.js";
@@ -11,6 +11,8 @@ import NotFound from "./utils/errors/NotFound.js";
 import morgan from "morgan";
 import logger from "./utils/logger.js";
 import { globalLimit } from "./middleware/rateLimiter.js";
+import swaggerUi from "swagger-ui-express";
+import swaggerDocument from "./swagger.json" with { type: "json" };
 
 dotenv.config();
 connectDb();
@@ -29,10 +31,10 @@ app.use(
     stream: { write: (message) => logger.info(message.trim()) },
   })
 );
-
-app.use("/api/admin", adminRouter);
-app.use("/api/users", userRouter);
-app.use("/api/posts", postRouter);
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+app.use("/api/v1/admin", adminRouter);
+app.use("/api/v1/users", userRouter);
+app.use("/api/v1/posts", postRouter);
 
 app.get("/api", (_req, res) => {
   res.json({ message: "Api is working" });

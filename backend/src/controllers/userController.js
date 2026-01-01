@@ -5,7 +5,7 @@ import { catchAsync } from "../utils/catchAsync.js";
 import { ValidationError } from "../utils/errors/ValidationError.js";
 import AuthError from "../utils/errors/AuthError.js";
 
-const searchUser = catchAsync(async (req, res,next) => {
+const searchUser = catchAsync(async (req, res) => {
   const page = parseInt(req.query.page) || 1;
   const limit = parseInt(req.query.limit) || 15;
   const skip = (page - 1) * limit;
@@ -51,7 +51,7 @@ const searchUser = catchAsync(async (req, res,next) => {
     },
   });
 });
-const getCurrentUser = catchAsync(async (req, res,next) => {
+const getCurrentUser = catchAsync(async (req, res) => {
   const user = await prisma.user.findUnique({
     where: {
       id: req.user.id,
@@ -70,7 +70,7 @@ const getCurrentUser = catchAsync(async (req, res,next) => {
     },
   });
 });
-const updateUser = catchAsync(async (req, res,next) => {
+const updateUser = catchAsync(async (req, res) => {
   const { firstName, lastName, username, email } = req.body;
   const user = await prisma.user.update({
     where: {
@@ -95,7 +95,7 @@ const updateUser = catchAsync(async (req, res,next) => {
     },
   });
 });
-const register = catchAsync(async (req, res,next) => {
+const register = catchAsync(async (req, res, next) => {
   const { firstName, lastName, username, email, password } = req.body;
   const usersExist = await prisma.user.findFirst({
     where: {
@@ -131,7 +131,7 @@ const register = catchAsync(async (req, res,next) => {
     },
   });
 });
-const login = catchAsync(async (req, res,next) => {
+const login = catchAsync(async (req, res, next) => {
   const { username, password } = req.body;
   const user = await prisma.user.findUnique({
     where: {
@@ -139,11 +139,11 @@ const login = catchAsync(async (req, res,next) => {
     },
   });
   if (!user) {
-    return next(new AuthError('Invalid username'));
+    return next(new AuthError("Invalid username"));
   }
   const isMatched = await bcrypt.compare(password, user.password);
   if (!isMatched) {
-    return next(new AuthError('Invalid password'));
+    return next(new AuthError("Invalid password"));
   }
   const token = generateToken(user, res);
   res.status(200).json({
@@ -159,7 +159,7 @@ const login = catchAsync(async (req, res,next) => {
     },
   });
 });
-const logout = catchAsync(async (_req, res,next) => {
+const logout = catchAsync(async (_req, res) => {
   res.cookie("jwt", "", {
     httpOnly: true,
     expires: new Date(0),

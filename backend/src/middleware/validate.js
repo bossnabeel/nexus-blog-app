@@ -1,6 +1,4 @@
-import { z } from "zod";
-import ValidationError from '../utils/errors/ValidationError.js'; // Extension check kar lena
-
+import ValidationError from '../utils/errors/ValidationError.js';
 export const validate = (schema) => (req, _res, next) => {
   const result = schema.safeParse(req.body);
   

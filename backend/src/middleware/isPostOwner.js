@@ -4,7 +4,7 @@ import { catchAsync } from "../utils/catchAsync.js";
 import  ForbiddenError from "../utils/errors/ForbiddenError.js";
 import { NotFound } from "../utils/errors/NotFound.js";
 
-const isPostOwner = catchAsync(async (req, res, next) => {
+const isPostOwner = catchAsync(async (req, _res, next) => {
   const postId = req.params.postId;
   const userId = req.user.id;
   const post = await prisma.post.findUnique({

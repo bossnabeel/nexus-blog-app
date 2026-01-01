@@ -3,10 +3,12 @@ import { catchAsync } from "../utils/catchAsync.js";
 import { NotFound } from "../utils/errors/NotFound.js"
 
 const allComment = catchAsync(async (req, res, next) => {
+
   const postId = req.params.postId;
   const page = parseInt(req.query.page) || 1;
   const limit = parseInt(req.query.limit) || 20;
   const skip = (page - 1) * limit;
+
   const [comments, totalComments] = await prisma.$transaction([
     prisma.comment.findMany({
       skip: skip,
@@ -43,7 +45,7 @@ const allComment = catchAsync(async (req, res, next) => {
     },
   });
 });
-const doComment = catchAsync(async (req, res, _next) => {
+const doComment = catchAsync(async (req, res) => {
   const { text } = req.body;
   const postId = req.params.postId;
   const userId = req.user.id;
@@ -74,7 +76,7 @@ const doComment = catchAsync(async (req, res, _next) => {
     },
   });
 });
-const updateComment = catchAsync(async (req, res, _next) => {
+const updateComment = catchAsync(async (req, res) => {
   const commentId = req.params.commentId;
   const { text } = req.body;
   const comment = await prisma.comment.update({

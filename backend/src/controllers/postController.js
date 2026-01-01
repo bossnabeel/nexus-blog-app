@@ -2,7 +2,7 @@ import { prisma } from "../config/db.js";
 import { catchAsync } from "../utils/catchAsync.js";
 import { NotFound } from "../utils/errors/NotFound.js";
 
-const getSingleBlog = catchAsync(async (req, res, next) => {
+const getSingleBlog = catchAsync(async (req, res) => {
   const postId = req.params.postId;
   const post = await prisma.post.findUnique({
     where: {
@@ -48,7 +48,7 @@ const getSingleBlog = catchAsync(async (req, res, next) => {
     },
   });
 });
-const getAllBlogs = catchAsync(async (req, res, _next) => {
+const getAllBlogs = catchAsync(async (req, res) => {
   const page = Math.max(1, parseInt(req.query.page) || 1);
   const limit = Math.max(1, Math.min(100, parseInt(req.query.limit) || 10));
   const skip = (page - 1) * limit;
@@ -87,7 +87,7 @@ const getAllBlogs = catchAsync(async (req, res, _next) => {
 
   const totalPages = Math.ceil(totalPosts / limit);
 
-  const formatedPosts = posts.map((post) => ({
+  const formatePosts = posts.map((post) => ({
     id: post.id,
     title: post.title,
     content:
@@ -103,11 +103,11 @@ const getAllBlogs = catchAsync(async (req, res, _next) => {
 
   res.status(200).json({
     status: "success",
-    data: formatedPosts,
+    data: formatePosts,
     pagination: { totalPosts, totalPages, currentPage: page, limit },
   });
 });
-const uploadBlog = catchAsync(async (req, res, _next) => {
+const uploadBlog = catchAsync(async (req, res) => {
   const { title, content } = req.body;
   const userId = req.user.id;
   const post = await prisma.post.create({
@@ -130,7 +130,7 @@ const uploadBlog = catchAsync(async (req, res, _next) => {
     },
   });
 });
-const updateBlog = catchAsync(async (req, res, _next) => {
+const updateBlog = catchAsync(async (req, res) => {
   const postId = req.params.postId;
   const { title, content } = req.body;
   const updatedPost = await prisma.post.update({
@@ -153,7 +153,7 @@ const updateBlog = catchAsync(async (req, res, _next) => {
     },
   });
 });
-const deleteBlog = catchAsync(async (req, res, next) => {
+const deleteBlog = catchAsync(async (req, res) => {
   const postId = req.params.postId;
   await prisma.post.delete({
     where: {
