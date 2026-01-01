@@ -33,9 +33,8 @@ app.use(
 );
 const options = {
   swaggerOptions: {
-    persistAuthorization: true,
+    url: "/api-docs/swagger.json",
   },
-
   customCssUrl: "https://cdn.jsdelivr.net/npm/swagger-ui-themes@3.0.0/themes/3.x/theme-material.css",
   customJs: [
     "https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/4.15.5/swagger-ui-bundle.js",
